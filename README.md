@@ -24,7 +24,7 @@ skill check with disadvange - roll 2d20 keep the smallest 1:
  * `$ python dice.py --small=1 2d20`
 
 estimate the average outcome for rolling 5d16 and keeping the best 2:
- * `$python dice.py --average --repeat=1000 --large=2 5d16`
+ * `$ python dice.py --average --repeat=1000 --large=2 5d16`
 
 ## TODO:
  * generalize `dice_ave.py`
