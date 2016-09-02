@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 """dice.py
-roll N d D
+roll NdD dice
 options:
-    only keep largest L dice: i.e. roll 4d6 keep largest 3 (char create)
-    only keep smallest S dice: i.e. roll 2d20 keep smallest S=1 (disadvantage)
-    roll M times and compute average
+    --large=L : only keep largest L dice: i.e. roll 4d6 keep largest 3 (char create)
+    --small=S : only keep smallest S dice: i.e. roll 2d20 keep smallest S=1 (disadvantage)
+    --repeat=M : repeat roll for M trials
+    --average : compute average of trials
 """
 
 from __future__ import (print_function, division)
