@@ -12,6 +12,19 @@ from __future__ import (print_function, division)
 
 import numpy as np
 import argparse
+import re
+
+def is_dice(string):
+    """validates dice string of form '^\d+d\d+\Z'
+      ^ -- start of string
+      \d -- digit
+      + -- at least one (greedy)
+      d -- char 'd'
+      \Z -- end of string
+    """
+    regex = re.compile(r'^\d+d\d+\Z')
+    return bool(regex.match(string))
+
 
 parser = argparse.ArgumentParser(description = 'simulated dice rolling!')
 
@@ -40,6 +53,9 @@ L = args.L
 S = args.S
 
 # sanity checks
+if not is_dice(dice):
+    print("dice.py: Error: '{0:s}' is not a valid dice string (i.e. '4d6')".format(dice))
+    exit()
 if M<1:
     print("dice.py: error: cannot roll fewer than 1 trial")
     exit()
@@ -49,7 +65,6 @@ if L and S:
     print("dice.py: error: cannot keep both largest and smallest")
     print("  specify ONE of --large OR --small")
     exit()
-# check string of form NdD
 
 N, D = map(int, dice.split('d'))
 
