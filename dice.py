@@ -57,12 +57,12 @@ if not is_dice(dice):
     print("dice.py: Error: '{0:s}' is not a valid dice string (i.e. '4d6')".format(dice))
     exit()
 if M<1:
-    print("dice.py: error: cannot roll fewer than 1 trial")
+    print("dice.py: Error: cannot roll fewer than 1 trial")
     exit()
 if M==1 and ave:
     print("dice.py: Warning: computing average of 1 roll")
 if L and S:
-    print("dice.py: error: cannot keep both largest and smallest")
+    print("dice.py: Error: cannot keep both largest and smallest")
     print("  specify ONE of --large OR --small")
     exit()
 
