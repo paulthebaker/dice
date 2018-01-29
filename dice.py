@@ -52,7 +52,6 @@ parser.add_argument('-a','--average', dest='ave',
 args = parser.parse_args()
 
 dice = args.dice[0]
-ave = args.ave
 M = args.M  # repeats
 L = args.L  # largest
 S = args.S  # smallest
@@ -68,7 +67,7 @@ if not is_dice(dice):
 if M<1:
     print(err + "cannot roll fewer than 1 trial")
     exit()
-if M==1 and ave:
+if M==1 and args.ave:
     print(warn + "computing average of 1 roll")
 if L and S:
     print(err + "cannot keep both largest and smallest")
@@ -105,7 +104,7 @@ else:
     roll_name = "{0:s}".format(dice)
     sums = np.sum(rolls, axis=1)
 
-if ave:
+if args.ave:
     print('ave of {0:s} x{1:d}'.format(dice, M))
     print('  {:f}'.format(np.mean(sums)))
 else:
