@@ -57,27 +57,33 @@ M = args.M
 L = args.L
 S = args.S
 
+err = "dice.py: Error: "
+warn = "dice.py: Warning: "
+
 # sanity checks
 if not is_dice(dice):
-    print("dice.py: Error: '{0:s}' is not a valid dice string (i.e. '4d6')".format(dice))
+    print(err + "'{0:s}' is not a valid dice string (i.e. '4d6')"
+           .format(dice))
     exit()
 if M<1:
-    print("dice.py: Error: cannot roll fewer than 1 trial")
+    print(err + "cannot roll fewer than 1 trial")
     exit()
 if M==1 and ave:
-    print("dice.py: Warning: computing average of 1 roll")
+    print(warn + "computing average of 1 roll")
 if L and S:
-    print("dice.py: Error: cannot keep both largest and smallest")
+    print(err + "cannot keep both largest and smallest")
     print("  specify ONE of --large OR --small")
     exit()
 
 N, D = map(int, dice.split('d'))
 
-    print("dice.py: Warning: asked for largest {0:d} of {1:d} dice, keeping ALL".format(L, N))
 if L and L>=N:
+    print(warn + "asked for largest {0:d} of {1:d} dice, keeping ALL"
+           .format(L, N))
     L = None
-    print("dice.py: Warning: asked for smallest {0:d} of {1:d} dice, keeping ALL".format(S, N))
 if S and S>=N:
+    print(warn + "asked for smallest {0:d} of {1:d} dice, keeping ALL"
+           .format(S, N))
     S = None
 
 # dice rolls, M trials of NdD
