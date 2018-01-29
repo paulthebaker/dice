@@ -73,11 +73,11 @@ if L and S:
 
 N, D = map(int, dice.split('d'))
 
-if L>=N:
     print("dice.py: Warning: asked for largest {0:d} of {1:d} dice, keeping ALL".format(L, N))
+if L and L>=N:
     L = None
-if S>=N:
     print("dice.py: Warning: asked for smallest {0:d} of {1:d} dice, keeping ALL".format(S, N))
+if S and S>=N:
     S = None
 
 # dice rolls, M trials of NdD
