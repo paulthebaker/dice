@@ -29,20 +29,25 @@ def is_dice(string):
 parser = argparse.ArgumentParser(description = 'simulated dice rolling!')
 
 # options
-parser.add_argument('dice', nargs=1, action='store', type=str,
-                        help="dice to roll as NdD (i.e. '4d6')")
+parser.add_argument('dice', nargs=1,
+                    action='store', type=str,
+                    help="dice to roll as NdD (i.e. '4d6')")
 
-parser.add_argument('-l','--large', dest='L', action='store', type=int, default=None,
-                        help='keep only the largest L dice')
+parser.add_argument('-l','--large', dest='L',
+                    action='store', type=int, default=None,
+                    help='keep only the largest L dice')
 
-parser.add_argument('-s','--small', dest='S', action='store', type=int, default=None,
-                        help='keep only the smallest S dice')
+parser.add_argument('-s','--small', dest='S',
+                    action='store', type=int, default=None,
+                    help='keep only the smallest S dice')
 
-parser.add_argument('-r','--repeat', dest='M', action='store', type=int, default=1,
-                        help='repeat roll for M trials')
+parser.add_argument('-r','--repeat', dest='M',
+                    action='store', type=int, default=1,
+                    help='repeat roll for M trials')
 
-parser.add_argument('-a','--average', dest='ave', action='store_true', default=False,
-                        help='return average of M repeats')
+parser.add_argument('-a','--average', dest='ave',
+                    action='store_true', default=False,
+                    help='return average of M repeats')
 
 args = parser.parse_args()
 
