@@ -53,9 +53,9 @@ args = parser.parse_args()
 
 dice = args.dice[0]
 ave = args.ave
-M = args.M
-L = args.L
-S = args.S
+M = args.M  # repeats
+L = args.L  # largest
+S = args.S  # smallest
 
 err = "dice.py: Error: "
 warn = "dice.py: Warning: "
