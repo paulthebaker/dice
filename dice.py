@@ -1,20 +1,12 @@
-#!/usr/bin/env python
-"""dice.py
-roll NdD dice
-options:
-    --large=L : only keep largest L dice: i.e. roll 4d6 keep largest 3 (char create)
-    --small=S : only keep smallest S dice: i.e. roll 2d20 keep smallest S=1 (disadvantage)
-    --repeat=M : repeat roll for M trials
-    --average : compute average of trials
-"""
+# dice.py
+"""utilities for dice"""
 
 from __future__ import (print_function, division)
 
 import numpy as np
-import argparse
 import re
 
-def is_dice(string):
+def _is_dice(string):
     """validates dice string of form '^\d+d\d+\Z'
       ^ -- start of string
       \d -- digit
@@ -25,89 +17,79 @@ def is_dice(string):
     regex = re.compile(r'^\d+d\d+\Z')
     return bool(regex.match(string))
 
+class Dice(object):
+    """class for dice"""
+    def __init__(self, dice, keep_large=None, keep_small=None):
+        """instantiate dice object
+        
+        :param dice: string
+            Dice string of the form NdD, where N is the number of dice
+            and D is the size of dice (e.g. '4d6').
+        :param keep_large: int
+            only keep largest L rolls.  For example in D&D character gen
+            ``dice = '4d6', keep_large = 3``.
+        :param keep_small: int
+            only keep smallest S rolls.  For example in D&D 5e disadvantage
+            ``dice = '2d20', keep_small = 1``
+        
+        You cannot specify both ``keep_small`` and ``keep_large`` in the same
+        instance.
+        """
+        if not _is_dice(dice):
+            msg = "'{0:s}' is not a valid dice string (e.g. '4d6')".format(dice)
+            raise ValueError(msg)
+        if keep_large and keep_small:
+            msg = ("cannot keep both largest and smallest rolls",
+                    "specify ONE of keep_large or keep_small")
+            raise ValueError(msg)
 
-parser = argparse.ArgumentParser(description = 'simulated dice rolling!')
+        self._dice = dice
+        self._large = keep_large
+        self._small = keep_small
+        self._N, self._D = map(int, dice.split('d'))
 
-# options
-parser.add_argument('dice', nargs=1,
-                    action='store', type=str,
-                    help="dice to roll as NdD (i.e. '4d6')")
+        if self._large and self._large >= self._N:
+            warn = ("WARNING: asked for largest {0:d} of {1:d} dice, keeping ALL"
+                    .format(self._large, self._N))
+            print(warn)
+            self.large = None
+        if self._small and self._small >= self._N:
+            warn = ("WARNING: asked for smallest {0:d} of {1:d} dice, keeping ALL"
+                    .format(self._small, self._N))
+            print(warn)
+            self._small = None
 
-parser.add_argument('-l','--large', dest='L',
-                    action='store', type=int, default=None,
-                    help='keep only the largest L dice')
+    @property
+    def dice():
+        return self._dice
+    @property
+    def N():
+        return self._N
+    @property
+    def D():
+        return self._D
+    @property
+    def large():
+        return self._large
+    @property
+    def small():
+        return self._small
 
-parser.add_argument('-s','--small', dest='S',
-                    action='store', type=int, default=None,
-                    help='keep only the smallest S dice')
+    def roll(self, num=1):
+        """roll dice
+        :param num: int
+            number of rolls
+        """
+        rolls = np.random.randint(self._D, size=(num, self._N)) + 1
+        rank = np.argsort(rolls, axis=1)
 
-parser.add_argument('-r','--repeat', dest='M',
-                    action='store', type=int, default=1,
-                    help='repeat roll for M trials')
+        if self._large:
+            tots = np.sum([roll[ss][-self._large:] for roll,ss in zip(rolls,rank)],
+                          axis=1)
+        elif self._small:
+            tots = np.sum([roll[ss][:self._small] for roll,ss in zip(rolls,rank)],
+                          axis=1)
+        else:
+            tots = np.sum(rolls, axis=1)
 
-parser.add_argument('-a','--average', dest='ave',
-                    action='store_true', default=False,
-                    help='return average of M repeats')
-
-args = parser.parse_args()
-
-dice = args.dice[0]
-M = args.M  # repeats
-L = args.L  # largest
-S = args.S  # smallest
-
-err = "dice.py: Error: "
-warn = "dice.py: Warning: "
-
-# sanity checks
-if not is_dice(dice):
-    print(err + "'{0:s}' is not a valid dice string (e.g. '4d6')"
-           .format(dice))
-    exit()
-if M<1:
-    print(err + "cannot roll fewer than 1 trial")
-    exit()
-if M==1 and args.ave:
-    print(warn + "computing average of 1 roll")
-if L and S:
-    print(err + "cannot keep both largest and smallest")
-    print("  specify ONE of --large OR --small")
-    exit()
-
-N, D = map(int, dice.split('d'))
-
-if L and L>=N:
-    print(warn + "asked for largest {0:d} of {1:d} dice, keeping ALL"
-           .format(L, N))
-    L = None
-if S and S>=N:
-    print(warn + "asked for smallest {0:d} of {1:d} dice, keeping ALL"
-           .format(S, N))
-    S = None
-
-# dice rolls, M trials of NdD
-rolls = np.random.randint(D, size=(M, N)) + 1
-
-
-sums = np.zeros(M, dtype=int)
-if L:
-    roll_name = "{0:s} keep largest {1:d}".format(dice, L)
-    keep = np.argsort(rolls, axis=1)
-    for mm, roll in enumerate(rolls):
-        sums[mm] = np.sum( roll[keep[mm]][-L:] )
-elif S:
-    roll_name = "{0:s} keep smallest {1:d}".format(dice, S)
-    keep = np.argsort(rolls, axis=1)
-    for mm, roll in enumerate(rolls):
-        sums[mm] = np.sum( roll[keep[mm]][:S] )
-else:
-    roll_name = "{0:s}".format(dice)
-    sums = np.sum(rolls, axis=1)
-
-if args.ave:
-    print('ave of {0:s} x{1:d}'.format(dice, M))
-    print('  {:f}'.format(np.mean(sums)))
-else:
-    print('{0:s} = '.format(roll_name))
-    for mm, roll in enumerate(sums):
-        print('  {:4d}'.format(roll))
+        return tots
