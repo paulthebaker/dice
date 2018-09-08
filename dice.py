@@ -61,7 +61,7 @@ warn = "dice.py: Warning: "
 
 # sanity checks
 if not is_dice(dice):
-    print(err + "'{0:s}' is not a valid dice string (i.e. '4d6')"
+    print(err + "'{0:s}' is not a valid dice string (e.g. '4d6')"
            .format(dice))
     exit()
 if M<1:
